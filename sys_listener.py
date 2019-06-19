@@ -127,17 +127,20 @@ def start_record():
         warns.set("Haven't set the destination process yet")
         return
     times = int(record_times.get())
+    # filepath modification
     file_path = path.get()
     if not file_path:
-        file_path = './'
+        file_path = '.'
     sign = '-'.join([hour_, record_, start_time])
-    filename = file_path + chosed_name_str + "-" + sign + '.csv'
+    filename = file_path + '/' + chosed_name_str + "-" + sign + '.csv'
+    # print("filename", filename)
     mem, cpu_usage = getCertainProcessInfo(chosed_pid)
     with open(filename, "a" , newline="") as datacsv:
         csvwriter = csv.writer(datacsv,dialect = ("excel"))
         csvwriter.writerow(["RecordTimesCount","ProcessName","ProcessId","MemoryUsed", "TotalCPUUsage","StartTime"])
         csvwriter.writerow([times,chosed_name_str,chosed_pid,mem, cpu_usage ,start_time])
-    s1 = '-'
+    # send to recorder
+    s1 = '+'
     variables_str = s1.join([chosed_name_str,str(chosed_pid), filename, hour_, record_])
     warns.set("Process tracing subprogram on {} \n is now running, will continue: {}h \n And record {} times\n\
         The result will be stored in the CSV.".format(chosed_name_str, hour_, record_))

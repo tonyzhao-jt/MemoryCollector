@@ -18,22 +18,24 @@ def getCertainProcessInfo(p_pid):
     except:
         exit()
 
-def record():
+def record(p_filename):
     print("Next time record")
     new_time = datetime.datetime.now().isoformat()
     mem, cpu_usage = getCertainProcessInfo(p_pid)
-    with open(filename, "a" , newline="") as datacsv:
+    print(p_filename)
+    with open(p_filename, "a" , newline="") as datacsv:
         csvwriter = csv.writer(datacsv,dialect = ("excel"))
         csvwriter.writerow([times, p_name, p_pid, mem, cpu_usage, new_time])
 
 
 if __name__ == '__main__':
     all_v = sys.argv[1]
-    # print(variables)
-    variables = all_v.split('-')
+    print("variables", all_v)
+    variables = all_v.split('+')
     p_name = variables[0]
     p_pid = int(variables[1])
     filename = variables[2]
+    # print("filename", variables)
     total_record_time = int(variables[3]) * 60 * 60
     record_total = int(variables[4])
     times = 1
@@ -44,5 +46,5 @@ if __name__ == '__main__':
     for i in range(record_total):
         time.sleep(total_record_time / record_total) # record 10 min per period
         # time.sleep(4)
-        record()
+        record(filename)
         times += 1
