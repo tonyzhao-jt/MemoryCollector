@@ -125,7 +125,7 @@ def start_record():
     if not file_path:
         file_path = './'
     sign = '-'.join([hour_, record_, start_time])
-    filename = file_path + '/' + chosed_name_str + "-" + sign + '.csv'
+    filename = file_path + chosed_name_str + "-" + sign + '.csv'
     mem, cpu_usage = getCertainProcessInfo(chosed_pid)
     with open(filename, "a" , newline="") as datacsv:
         csvwriter = csv.writer(datacsv,dialect = ("excel"))
