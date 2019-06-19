@@ -86,6 +86,12 @@ def searchProcessBtn():
     result = searchProcess(process_dict, text)
     refreshTreeData(treeview, result)
 
+def modifyName(p_chosed_name):
+    new_name = p_chosed_name
+    if '.' in p_chosed_name:
+        new_name = p_chosed_name.split('.')[0]
+    return new_name
+
 def treeviewClick(event):
     global chosed_name_str, chosed_pid
     warns.set("")
@@ -93,7 +99,7 @@ def treeviewClick(event):
         item_text = treeview.item(item,"values")
         chosed_name.set("Current selected：\n"+item_text[0])
         # record the process
-        chosed_name_str = item_text[0]
+        chosed_name_str = modifyName(item_text[0])
         chosed_pid = int(item_text[1])
 
 def run_sub(variables_str):
