@@ -118,7 +118,7 @@ def start_record():
         csvwriter.writerow([times,chosed_name_str,chosed_pid,mem, cpu_usage ,start_time])
     s1 = '-'
     variables_str = s1.join([chosed_name_str,str(chosed_pid), filename])
-    warns.set("Process tracing subprogram:"+ variables_str + "is now running")
+    warns.set("Process tracing subprogram:\n"+ variables_str + "\nis now running")
     thread_it(run_sub, variables_str)
     
     
@@ -176,7 +176,7 @@ if __name__ == '__main__':
     record_times = tkinter.StringVar()
     record_times.set('0')
     warns = tkinter.StringVar()
-    label_warn = tkinter.Label(root, textvariable = warns, font=("Arial", 20),  
-                      fg='Red').grid(row=6, column = 1, columnspan = 2)
+    label_warn = tkinter.Label(root, textvariable = warns, font=("Arial", 15),  
+                      fg='Red').grid(row=6, column = 1, columnspan = 2, rowspan = 3)
 
     root.mainloop()
