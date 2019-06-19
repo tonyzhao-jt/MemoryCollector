@@ -12,6 +12,7 @@ import datetime
 import subprocess
 import threading
 import os
+import platform
 
 def thread_it(func, *args):
     t = threading.Thread(target=func, args=args) 
@@ -104,7 +105,10 @@ def treeviewClick(event):
         chosed_pid = int(item_text[1])
 
 def run_sub(variables_str):
-    subprocess.call('python3 csv_recorder.py ' + variables_str, shell=True)
+    if platform.system == "Windows":
+        subprocess.call('python csv_recorder.py ' + variables_str, shell=True)
+    else: 
+        subprocess.call('python3 csv_recorder.py ' + variables_str, shell=True)
     warns.set("Tracer process is over, you can choose again now!")
 
 def getConcateFilePath(hour_, record_, start_time):
@@ -132,7 +136,7 @@ def start_record():
         warns.set("Wrong input, please be positive integer")
         return
     # first time
-    start_time = datetime.datetime.now().isoformat()
+    start_time = datetime.datetime.now().date().isoformat()
 
     if chosed_pid == 0:
         warns.set("Haven't set the destination process yet")
