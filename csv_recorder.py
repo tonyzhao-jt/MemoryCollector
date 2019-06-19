@@ -34,11 +34,13 @@ if __name__ == '__main__':
     p_name = variables[0]
     p_pid = int(variables[1])
     filename = variables[2]
+    total_record_time = int(variables[3]) * 60 * 60
+    record_total = int(variables[4])
     times = 1
     # 2 h = 6 * 2 = 12 times
     # total record 2 hour = 2 * 60 * 60
-    total_record_time = 2 * 60 * 60
-    record_total = 24
+    # total_record_time = 2 * 60 * 60
+    # record_total = 24
     for i in range(record_total):
         time.sleep(total_record_time / record_total) # record 10 min per period
         # time.sleep(4)

@@ -101,6 +101,22 @@ def run_sub(variables_str):
     warns.set("Tracer process is over, you can choose again now!")
 
 def start_record():
+    try:
+        hour_ = e_hour.get()
+        record_ = e_times.get()
+        hour_num = int(hour_)
+        record_num = int(record_)
+        if(hour_num > 0 and record_num > 0):
+            pass
+        else:
+            warns.set("Wrong input, please be positive integer")
+            return 
+    except:
+        warns.set("Wrong input, please be positive integer")
+        return
+    # first time
+    start_time = datetime.datetime.now().isoformat()
+
     if chosed_pid == 0:
         warns.set("Haven't set the destination process yet")
         return
@@ -108,17 +124,17 @@ def start_record():
     file_path = path.get()
     if not file_path:
         file_path = './'
-    filename = file_path + '/' + chosed_name_str + '.csv'
-    # first time
-    start_time = datetime.datetime.now().isoformat()
+    sign = '-'.join([hour_, record_, start_time])
+    filename = file_path + '/' + chosed_name_str + "-" + sign + '.csv'
     mem, cpu_usage = getCertainProcessInfo(chosed_pid)
     with open(filename, "a" , newline="") as datacsv:
         csvwriter = csv.writer(datacsv,dialect = ("excel"))
-        csvwriter.writerow(["RecordTimes","ProcessName","ProcessId","MemoryUsed", "TotalCPUUsage","Start_time"])
+        csvwriter.writerow(["RecordTimesCount","ProcessName","ProcessId","MemoryUsed", "TotalCPUUsage","StartTime"])
         csvwriter.writerow([times,chosed_name_str,chosed_pid,mem, cpu_usage ,start_time])
     s1 = '-'
-    variables_str = s1.join([chosed_name_str,str(chosed_pid), filename])
-    warns.set("Process tracing subprogram:\n"+ variables_str + "\nis now running")
+    variables_str = s1.join([chosed_name_str,str(chosed_pid), filename, hour_, record_])
+    warns.set("Process tracing subprogram on {} \n is now running, will continue: {}h \n And record {} times\n\
+        The result will be stored in the CSV.".format(chosed_name_str, hour_, record_))
     thread_it(run_sub, variables_str)
     
     
@@ -170,13 +186,24 @@ if __name__ == '__main__':
     tkinter.Label(root,text = "Search the process name:").grid(row = 4, column = 0, sticky=tkinter.E)
     e1.grid(row = 4, column = 1, sticky=tkinter.W)
     btn_e = tkinter.Button(root, text = "Search", command = searchProcessBtn).grid(row = 4, column = 2, sticky=tkinter.W)
-    
-    btn_record = tkinter.Button(root,text="Start record 2 Hour", command = start_record, width = 15, height = 5,
-    ).grid(row=5, column = 1, columnspan = 2)
+    # modified the collection times
+    strvar_hour = tkinter.Variable()
+    strvar_times = tkinter.Variable()
+    strvar_hour.set("2")
+    strvar_times.set("24")
+    e_hour = tkinter.Entry(root, textvariable = strvar_hour)
+    e_hour.grid(row = 5, column = 1, sticky=tkinter.W)
+    e_times = tkinter.Entry(root, textvariable = strvar_times)
+    e_times.grid(row = 6, column = 1, sticky=tkinter.W)
+
+    tkinter.Label(root,text = "Collecting hour:").grid(row = 5, column = 0, sticky=tkinter.W)
+    tkinter.Label(root,text = "Total Collecting Times:").grid(row = 6, column = 0, sticky=tkinter.W)
+    btn_record = tkinter.Button(root,text="Start Record", command = start_record, width = 15, height = 5,
+    ).grid(row=7, column = 1)
     record_times = tkinter.StringVar()
     record_times.set('0')
     warns = tkinter.StringVar()
     label_warn = tkinter.Label(root, textvariable = warns, font=("Arial", 15),  
-                      fg='Red').grid(row=6, column = 1, columnspan = 2, rowspan = 3)
+                      fg='Red').grid(row=8, column = 1, columnspan = 2, rowspan = 3)
 
     root.mainloop()
