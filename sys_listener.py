@@ -105,7 +105,7 @@ def treeviewClick(event):
         chosed_pid = int(item_text[1])
 
 def run_sub(variables_str):
-    if platform.system == "Windows":
+    if platform.system() == "Windows":
         subprocess.call('python csv_recorder.py ' + variables_str, shell=True)
     else: 
         subprocess.call('python3 csv_recorder.py ' + variables_str, shell=True)
