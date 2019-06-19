@@ -88,18 +88,22 @@ def searchProcessBtn():
 
 def treeviewClick(event):
     global chosed_name_str, chosed_pid
+    warns.set("")
     for item in treeview.selection():
         item_text = treeview.item(item,"values")
-        chosed_name.set("当前选择："+item_text[0])
+        chosed_name.set("Current selected：\n"+item_text[0])
         # record the process
         chosed_name_str = item_text[0]
         chosed_pid = int(item_text[1])
 
 def run_sub(variables_str):
     subprocess.call('python3 csv_recorder.py ' + variables_str, shell=True)
-    warns.set("进程结束,可重新选择")
+    warns.set("Tracer process is over, you can choose again now!")
 
 def start_record():
+    if chosed_pid == 0:
+        warns.set("Haven't set the destination process yet")
+        return
     times = int(record_times.get())
     file_path = path.get()
     if not file_path:
@@ -114,11 +118,8 @@ def start_record():
         csvwriter.writerow([times,chosed_name_str,chosed_pid,mem, cpu_usage ,start_time])
     s1 = '-'
     variables_str = s1.join([chosed_name_str,str(chosed_pid), filename])
-    warns.set("进程数据追踪子程序:"+ variables_str + "已经开始运行")
+    warns.set("Process tracing subprogram:"+ variables_str + "is now running")
     thread_it(run_sub, variables_str)
-    
-    
-        
     
     
 
@@ -127,8 +128,8 @@ if __name__ == '__main__':
     chosed_pid = 0
     chosed_name_str = ''
     # GUI
-    root = tkinter.Tk(className='The CPU Watcher')
-    root.geometry("500x800+200+200")
+    root = tkinter.Tk(className='The Process Status Watcher')
+    root.geometry("600x800+200+200")
     path = tkinter.StringVar()
     photo = tkinter.PhotoImage(file='./logo.png')
     img_label = tkinter.Label(root,image=photo).grid(row = 0, column = 0, sticky=tkinter.W)
@@ -139,11 +140,11 @@ if __name__ == '__main__':
     ).grid(row = 0, column = 1, sticky=tkinter.W)
 
     # choose the saving path
-    tkinter.Label(root,text = "结果保存路径:").grid(row = 1, column = 0, sticky=tkinter.E)
+    tkinter.Label(root,text = "Result save path:").grid(row = 1, column = 0, sticky=tkinter.E)
     tkinter.Entry(root, textvariable = path).grid(row = 1, column = 1, sticky=tkinter.W)
-    tkinter.Button(root, text = "路径选择", command = selectPath).grid(row = 1, column = 2, sticky=tkinter.W)
+    tkinter.Button(root, text = "Open", command = selectPath).grid(row = 1, column = 2, sticky=tkinter.W)
     
-    # demonstrate the information
+    # tree structure
     columns = ("p_name", "PID")
     treeview = ttk.Treeview(root, height=18, show="headings", columns=columns)  # 表格
 
@@ -154,9 +155,9 @@ if __name__ == '__main__':
     treeview.heading("PID", text="PID")
 
 
-    treeview.grid(row = 2, rowspan = 2, columnspan = 2, sticky=tkinter.W)
+    treeview.grid(row = 2, rowspan = 2, columnspan = 2, sticky=tkinter.E)
     
-    btn_refresh = tkinter.Button(root,text="Refresh Process", command = refreshData, width = 15, height = 5,
+    btn_refresh = tkinter.Button(root,text="Refresh\nProcess", command = refreshData, width = 15, height = 5,
     ).grid(row=2, column = 2, sticky=tkinter.W)
     # the chosen process
     chosed_name = tkinter.StringVar()
@@ -166,16 +167,16 @@ if __name__ == '__main__':
     
     # searching 
     e1 = tkinter.Entry(root)
-    tkinter.Label(root,text = "搜索进程名:").grid(row = 4, column = 0, sticky=tkinter.E)
+    tkinter.Label(root,text = "Search the process name:").grid(row = 4, column = 0, sticky=tkinter.E)
     e1.grid(row = 4, column = 1, sticky=tkinter.W)
-    btn_e = tkinter.Button(root, text = "搜索", command = searchProcessBtn).grid(row = 4, column = 2, sticky=tkinter.W)
+    btn_e = tkinter.Button(root, text = "Search", command = searchProcessBtn).grid(row = 4, column = 2, sticky=tkinter.W)
     
-    btn_record = tkinter.Button(root,text="Record 2 Hour", command = start_record, width = 15, height = 10,
-    ).grid(row=5, column = 0, columnspan = 2)
+    btn_record = tkinter.Button(root,text="Start record 2 Hour", command = start_record, width = 15, height = 5,
+    ).grid(row=5, column = 1, columnspan = 2)
     record_times = tkinter.StringVar()
     record_times.set('0')
     warns = tkinter.StringVar()
-    label_warn = tkinter.Label(root, textvariable = warns, font=("Arial", 10),  
-                      fg='Red').grid(row=6, column = 0, columnspan = 2)
+    label_warn = tkinter.Label(root, textvariable = warns, font=("Arial", 20),  
+                      fg='Red').grid(row=6, column = 1, columnspan = 2)
 
     root.mainloop()
