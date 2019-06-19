@@ -12,14 +12,14 @@ You can install it by
 
 #### How to use
 - For mac users, You can double click the start.command
-- 
+- For win users
   1. Cd to the root of this folder
   2. Download the supporting external libraries by executing
      ```
-          pip3 install -r requirements.txt
+          pip install -r requirements.txt
      ```
   3. Use
      ```
-         python3 sys_listener.py 
+         python sys_listener.py 
      ```
      to run it

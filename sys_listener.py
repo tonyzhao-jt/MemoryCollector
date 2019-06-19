@@ -11,6 +11,7 @@ import csv
 import datetime
 import subprocess
 import threading
+import os
 
 def thread_it(func, *args):
     t = threading.Thread(target=func, args=args) 
@@ -106,6 +107,16 @@ def run_sub(variables_str):
     subprocess.call('python3 csv_recorder.py ' + variables_str, shell=True)
     warns.set("Tracer process is over, you can choose again now!")
 
+def getConcateFilePath(hour_, record_, start_time):
+    # filepath modification
+    current_path = path.get()
+    if not current_path:
+        current_path = os.path.abspath(os.path.dirname(__file__))
+    sign = '-'.join([hour_, record_, start_time])
+    file_name = chosed_name_str + "-" + sign + '.csv'
+    file_path = os.path.join(current_path, file_name)
+    return file_path
+
 def start_record():
     try:
         hour_ = e_hour.get()
@@ -127,21 +138,16 @@ def start_record():
         warns.set("Haven't set the destination process yet")
         return
     times = int(record_times.get())
-    # filepath modification
-    file_path = path.get()
-    if not file_path:
-        file_path = '.'
-    sign = '-'.join([hour_, record_, start_time])
-    filename = file_path + '/' + chosed_name_str + "-" + sign + '.csv'
-    # print("filename", filename)
+    file_path = getConcateFilePath(hour_, record_, start_time)
+    
     mem, cpu_usage = getCertainProcessInfo(chosed_pid)
-    with open(filename, "a" , newline="") as datacsv:
+    with open(file_path, "a" , newline="") as datacsv:
         csvwriter = csv.writer(datacsv,dialect = ("excel"))
         csvwriter.writerow(["RecordTimesCount","ProcessName","ProcessId","MemoryUsed", "TotalCPUUsage","StartTime"])
         csvwriter.writerow([times,chosed_name_str,chosed_pid,mem, cpu_usage ,start_time])
     # send to recorder
     s1 = '+'
-    variables_str = s1.join([chosed_name_str,str(chosed_pid), filename, hour_, record_])
+    variables_str = s1.join([chosed_name_str,str(chosed_pid), file_path, hour_, record_])
     warns.set("Process tracing subprogram on {} \n is now running, will continue: {}h \n And record {} times\n\
         The result will be stored in the CSV.".format(chosed_name_str, hour_, record_))
     thread_it(run_sub, variables_str)
